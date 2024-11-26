@@ -1,0 +1,23 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  /* 2. Remove default margin */
+  * {
+    margin: 0;
+  }
+body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+#main-heading{text-align:center;font-family:Arial, sans-serif;color:#000000;background-color:#ffffff;}
+#studentlist{text-align:left;font-family:Arial, sans-serif;color:#000000;background-color:#ffffff; margin-top:100px;;}
+p{font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+#ulist {
+  list-style-type: none; /* Removes bullets */
+  padding: 0;           /* Removes default padding */
+  margin: 0;            /* Removes default margin */
+}
+#ulist1{
+  list-style-type: none; /* Removes bullets */
+  padding: 0;           /* Removes default padding */
+  margin: 0;            /* Removes default margin */
+  text-align:center;
+  font-family:Arial, sans-serif;
+}
