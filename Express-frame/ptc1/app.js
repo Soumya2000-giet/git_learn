@@ -1,18 +1,26 @@
 const http = require('http')
+
+const body_parser = require('body-parser')
 const Express = require('express')
 
 const app = Express();
 
+app.use(body_parser.urlencoded({extended : false}))
 
-app.use((request, response, next)=>{
-    console.log("this is 1st middlewire");
-    next();
+
+app.use('/add-product',(request, response, next)=>{
+    console.log("this is 2nd middlewire")
+    response.send("<form action ='/product' method='post'><label for='name'>Name</label><input type='text' id='name' name='title'><button type='submit'>add</button></form>")
+})
+app.use('/product',(request, response, next)=>{
+    console.log(request.body)
+    response.redirect('/')
 })
 
 
-app.use((request, response, next)=>{
-    console.log("this is 2nd middlewire")
-    response.send('<h1>Hello Express</h1>')
+app.use('/',(request, response, next)=>{
+    response.send("<h1>hello from 1st page</h1>")
+    console.log("this is 1st middlewire");
 })
 
 app.listen(3000,()=>{
