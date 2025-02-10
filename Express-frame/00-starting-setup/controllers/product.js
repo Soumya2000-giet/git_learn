@@ -1,4 +1,4 @@
-const products = [];
+const product = require('../models/product')
 exports.getProduct =(req, res, next) => {
     res.render('add-product', {
       pageTitle: 'Add Product',
@@ -10,11 +10,17 @@ exports.getProduct =(req, res, next) => {
   }
 
 exports.addProduct = (req, res, next) => {
-    products.push({ title: req.body.title });
+    const new_prod = new product(req.body.title);
+    new_prod.save()
+    // products.push({ title: req.body.title });
+    console.log("product added")
     res.redirect('/');
   }  
 
 exports.addshopdata = (req, res, next) => {
+    product.fetch(products=>{
+      console.log("product fetching successful")
+    console.log(products)
     res.render('shop', {
       prods: products,
       pageTitle: 'Shop',
@@ -23,4 +29,6 @@ exports.addshopdata = (req, res, next) => {
       activeShop: true,
       productCSS: true
     });
+    })
+    
   }  
