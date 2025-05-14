@@ -1,20 +1,21 @@
 const db = require('../Utils/connection2')
+const {errResponse, correctResponse} = require('../utils/response_controller')
 
 const add_bus = (req,res)=>{
     const {busNumber,totalSeats,availableSeats} = req.body
 
     const query = 'insert into buses(busNumber, totalSeats, availableSeats) values(?,?,?)'
 
-    db.execute(query,[busNumber, totalSeats, availableSeats],(err)=>{
+    db.execute(query,[busNumber, totalSeats, availableSeats],(err,result)=>{
         if(err){
             console.log(err)
-            res.status(500).send("error in adding bus")
             db.end()
-            return
+            return errResponse(res,{StatusCode : 500, mesaage : "error in adding bus"})
+           
         }
 
         console.log("data insertion successful into buses table")
-        res.status(200).send(`Bus with no ${busNumber} successfully added into buses table`)
+        return correctResponse(res,result)
     })
 
 
@@ -28,12 +29,11 @@ const get_bus = (req,res)=>{
 
     db.execute(query,[seats],(err, result)=>{
         if(err){
-            res.status(500).send('error in geeting bus')
             db.end()
-            return
+            return errResponse(res,{StatusCode : 500, mesaage : "error in getting buses details"})
+            
         }
-
-        res.status(200).send(`${JSON.stringify(result)}`)
+        return correctResponse(res,result)
     })
 }
 
