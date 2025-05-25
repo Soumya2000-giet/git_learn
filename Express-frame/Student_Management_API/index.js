@@ -17,8 +17,8 @@ app.use(express.json())
 // })
 
 
-// app.use('/students',student_route)
-db.sync({force:true}).then(
+app.use('/students',student_route)
+db.sync().then(
 app.listen(3000,err=>{
     console.log('app is running')
 })

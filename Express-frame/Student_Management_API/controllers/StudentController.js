@@ -1,8 +1,13 @@
 const db = require('../utils/connection')
 
+const Student = require('../models/student_model')
+
+
+
 const {err_response, correctResponse} = require('../utils/response_handler')
 
 const get_student = (req,res)=>{
+
     const  query = 'select * from Students';
 
     db.execute(query,(err,result)=>{
@@ -16,19 +21,33 @@ const get_student = (req,res)=>{
 })
 }
 
-const add_student = (req, res)=>{
+const add_student =async  (req, res)=>{
     const {name , email, age} = req.body
 
-    const query = 'insert into Students (name, email, age) values(?,?,?)'
+    //const query = 'insert into Students (name, email, age) values(?,?,?)'
 
-    db.execute(query,[name,email,age],(err, result)=>{
-        if(err){
-            console.log(err)
-            db.end()
-            err_response(res, {StatusCode : 500,message : "unable to insert data into students table"})
-        }
-        correctResponse(res,result)
-    })
+
+    try{
+        const student = await Student.create({
+            name :name,
+            email : email,
+            age:age
+        })
+         correctResponse(res,student)
+    }
+    catch(err){
+        console.log(err)
+         err_response(res, {StatusCode : 500,message : "unable to add data into students table"})
+    }
+
+    // db.execute(query,[name,email,age],(err, result)=>{
+    //     if(err){
+    //         console.log(err)
+    //         db.end()
+    //         err_response(res, {StatusCode : 500,message : "unable to insert data into students table"})
+    //     }
+    //     correctResponse(res,result)
+    // })
 }
 
 const retrive_student = (req, res)=>{
@@ -47,40 +66,75 @@ const retrive_student = (req, res)=>{
     })
 }
 
-const update_student = (req,res)=>{
+const update_student = async (req,res)=>{
     const {name, email,age}  = req.body
 
     const {id} =req.params
 
-    const query = 'update Students set name =? ,email =? , age = ? where id = ?'
+    try{
+         const student = await Student.findByPk(id)
 
-
-    db.execute(query,[name, email, age, id],(err, result)=>{
-        if (err){
+         if(!student){
+             err_response(res, {StatusCode : 500,message : `unable to find student with id ${id}`})
+         }
+         student.name = name
+         student.email = email
+         student.age = age 
+         const result = await student.save()
+          correctResponse(res,result)
+    }
+    catch(err){
         console.log(err)
-        db.end()
-        err_response(res, {StatusCode : 500,message : "unable to update data of students table"})
-        }
-        correctResponse(res,result)
-    })
+         err_response(res, {StatusCode : 500,message : "unable to update students table "})
+    }
+   
+
+    // const query = 'update Students set name =? ,email =? , age = ? where id = ?'
+
+
+    // db.execute(query,[name, email, age, id],(err, result)=>{
+    //     if (err){
+    //     console.log(err)
+    //     db.end()
+    //     err_response(res, {StatusCode : 500,message : "unable to update data of students table"})
+    //     }
+    //     correctResponse(res,result)
+    // })
     
 }
 
 
-const delete_student = (req, res)=>{
+const delete_student = async(req, res)=>{
     const {id} = req.params
-    const query = 'delete from Students where id = ?'
-
-    db.execute(query , [id],(err, result)=>{
-        if(err){
-        console.log(err)
-        db.end()
-        err_response(res,{StatusCode : 500,message : "unable delete students from students table"})
-        }
-        correctResponse(res,result)
-        
-        
+try{
+    const result = await Student.destroy({
+        where : {
+            id : id
+        },
     })
+    if(!result){
+        err_response(res, {StatusCode : 500,message : `unable to find student with id ${id}`})
+    }
+    correctResponse(res,result)
+}
+catch(err){
+    console.log(err)
+    err_response(res, {StatusCode : 500,message : "unable to delete data fromstudents table"})
+}
+
+
+    // const query = 'delete from Students where id = ?'
+
+    // db.execute(query , [id],(err, result)=>{
+    //     if(err){
+    //     console.log(err)
+    //     db.end()
+    //     err_response(res,{StatusCode : 500,message : "unable delete students from students table"})
+    //     }
+    //     correctResponse(res,result)
+        
+        
+    // })
 }
 
 

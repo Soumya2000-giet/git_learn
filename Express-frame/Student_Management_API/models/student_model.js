@@ -4,10 +4,16 @@ const sequelize= require('../utils/connection.js')
 
 const Student = sequelize.define('students',{
     id:{
-        type:DataTypes.STRING,
+        type:DataTypes.INTEGER,
         allowNull:false,
-        primaryKey : TextTrackCue,
+        primaryKey : true,
         autoIncrement:true
+    },
+    email:{
+        type:DataTypes.STRING
+    },
+    name:{
+        type:DataTypes.STRING
     }
 })
 
