@@ -4,9 +4,12 @@ const app = express()
 
 app.use(express.json())
 
+
+const db = require('./Utils/connection2')
+
 const user_route = require('./routers/UserRouter')
 
-const bus_route = require('./routers/BusRouter')
+ const bus_route = require('./routers/BusRouter')
 
 
 app.get('/',(req,res)=>{
@@ -18,7 +21,11 @@ app.use('/users',user_route)
 
 app.use('/buses',bus_route)
 
-
+db.sync().then(()=>{
 app.listen(3000,err=>{
     console.log("app is running")
+})
+})
+.catch((err)=>{
+    console.log(err)
 })

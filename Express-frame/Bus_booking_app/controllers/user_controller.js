@@ -1,42 +1,44 @@
 const db = require('../Utils/connection2')
 
+const user_mod = require('../models/User_model')
+
 const {errResponse, correctResponse} = require('../utils/response_controller')
 
 
 
-const add_user = (req,res)=>{
+const add_user = async (req,res)=>{
 
     const {name, email} = req.body
-    const query = 'insert into users (name,email) values(?,?)'
-
-    db.execute(query,[name, email], (err,result)=>{
-        if (err){
-        console.log(err)
-        
-        db.end()
-        return errResponse(res,{StatusCode : 500, mesaage : "error in inserting to userss table"})
-        
-        }
-       
-        return correctResponse(res,result)
+    try{
+    const result = await user_mod.create({
+        name : name ,
+        email : email
     })
+    
+    correctResponse(res,result)
+    }
+    catch(err){
+        console.log(err)
+        errResponse(res,{StatusCode : 500, mesaage : "error in inserting to users table"})
+    }
+   
 }
 
-const get_user = (req,res)=>{
-    const query = 'select * from users'
+const get_user = async(req,res)=>{
 
-    db.execute(query,(err,result)=>{
-        if(err){
-            console.log(err)
-          
-            db.end()
-            return errResponse(res,{StatusCode : 500, message : "error in inserting to userss table"})
-            
-        }
-        console.log("successfully fetched students")
-        return correctResponse(res,result)
+    try{
+    const result = await user_mod.findAll()
 
-    })
+    if(!result || result.length===0){
+         return errResponse(res, {StatusCode : 500,message : `no users available`})
+    }
+    correctResponse(res,result)
+}
+catch(err){
+    console.log(err)
+    errResponse(res,{StatusCode : 500, mesaage : "error in fetching from  users table"})
+}
+    
 }
 
 module.exports = {

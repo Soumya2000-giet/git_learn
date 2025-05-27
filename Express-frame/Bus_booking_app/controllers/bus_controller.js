@@ -1,40 +1,50 @@
 const db = require('../Utils/connection2')
+const bus_model = require('../models/bus_model')
 const {errResponse, correctResponse} = require('../utils/response_controller')
 
-const add_bus = (req,res)=>{
+const {Op} = require('sequelize')
+
+const add_bus = async (req,res)=>{
     const {busNumber,totalSeats,availableSeats} = req.body
 
-    const query = 'insert into buses(busNumber, totalSeats, availableSeats) values(?,?,?)'
-
-    db.execute(query,[busNumber, totalSeats, availableSeats],(err,result)=>{
-        if(err){
-            console.log(err)
-            db.end()
-            return errResponse(res,{StatusCode : 500, mesaage : "error in adding bus"})
-           
-        }
-
-        console.log("data insertion successful into buses table")
-        return correctResponse(res,result)
+    try{
+        const buses = await bus_model.create({
+        busNumber : busNumber,
+        totalSeats : totalSeats,
+        availableSeats : availableSeats
     })
-
+    correctResponse(res,buses)
+    }
+    catch(err){
+        console.log(err)
+        errResponse(res, {StatusCode : 500,message : "unable to add data into bus table"})
+    }
 
 }
 
 
-const get_bus = (req,res)=>{
+const get_bus = async (req,res)=>{
     const {seats} = req.params
 
-    const query = 'select * from buses where availableSeats > ?'
 
-    db.execute(query,[seats],(err, result)=>{
-        if(err){
-            db.end()
-            return errResponse(res,{StatusCode : 500, mesaage : "error in getting buses details"})
-            
+    try{
+        const buses = await bus_model.findAll({
+            where :{
+                availableSeats:{ [Op.gt]: seats}
+            }
+        })
+        if(!buses || buses.length === 0){
+            return errResponse(res, {StatusCode : 500,message : `no buses avaialble with ${seats} available seats`})
         }
-        return correctResponse(res,result)
-    })
+        correctResponse(res,buses)
+    }
+
+    catch(err){
+        console.log(err)
+        errResponse(res, {StatusCode : 500,message : "unable to fetch buses"})
+    }
+
+   
 }
 
 
