@@ -5,7 +5,7 @@ const app = express()
 const db = require('./utils/connection')
 
 const student_route = require('./routers/student_routers')
-
+require('./models')
 
 
 app.use(express.json())

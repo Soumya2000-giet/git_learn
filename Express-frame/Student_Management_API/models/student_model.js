@@ -14,7 +14,13 @@ const Student = sequelize.define('students',{
     },
     name:{
         type:DataTypes.STRING
+
+
+
+
+        
     }
 })
 
 module.exports = Student
+
