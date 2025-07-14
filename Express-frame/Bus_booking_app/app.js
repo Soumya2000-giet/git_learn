@@ -21,6 +21,8 @@ app.use('/users',user_route)
 
 app.use('/buses',bus_route)
 
+require('./models')
+
 db.sync().then(()=>{
 app.listen(3000,err=>{
     console.log("app is running")

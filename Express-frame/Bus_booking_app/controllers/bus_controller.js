@@ -1,5 +1,10 @@
 const db = require('../Utils/connection2')
 const bus_model = require('../models/bus_model')
+
+const booking_mod = require('../models/booking_model')
+
+const user_mod = require('../models/User_model')
+
 const {errResponse, correctResponse} = require('../utils/response_controller')
 
 const {Op} = require('sequelize')
@@ -48,9 +53,36 @@ const get_bus = async (req,res)=>{
 }
 
 
+const get_bus_booking = async(req, res)=>{
+    const bus_id = req.params.id 
+
+    try{
+    const busBooking = await booking_mod.findAll({
+        where : {BusId : bus_id},
+
+        include :{
+            model : user_mod,
+            attributes :  ['name', 'email']
+        }
+    })
+
+    correctResponse(res, busBooking)
+}
+
+
+
+    catch(error){
+        errResponse(res,{StatusCode : 500, mesaage : "error in fetching bus bookings"})
+
+    }
+}
+
+
+
 module.exports = {
     add_bus,
-    get_bus
+    get_bus,
+    get_bus_booking
 }
 
 
