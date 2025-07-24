@@ -15,5 +15,7 @@ s_router.put('/updatestudent/:id',StudentController.update_student)
 
 s_router.delete('/deletestudent/:id',StudentController.delete_student)
 
+s_router.post('/addStudentIdentity',StudentController.addStudentIdentity)
+
 module.exports = s_router
 

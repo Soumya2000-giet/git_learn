@@ -2,6 +2,8 @@ const db = require('../utils/connection')
 
 const Student = require('../models/student_model')
 
+const IdentityCard = require('../models/identity_card')
+
 
 
 const {err_response, correctResponse} = require('../utils/response_handler')
@@ -106,11 +108,29 @@ catch(err){
 }
 
 
+const addStudentIdentity = async (req,res)=>{
+    try{
+    const student = await Student.create(req.body.student);
+    const idcard = await IdentityCard.create({...req.body.IdentityCard,
+        studentID:student.Id})
+
+     correctResponse(res, idcard)    
+    }
+   
+    catch(err){
+        console.log(err)
+         err_response(res, {StatusCode : 500,message : "unable to add data to sudentsidentity table"})
+
+    }
+}
+
 module.exports = {
     get_student,
     add_student,
     retrive_student,
     update_student,
-    delete_student
+    delete_student,
+    addStudentIdentity
+    
 
 }
