@@ -1,0 +1,64 @@
+body {
+  background-color: pink;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.form-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, textarea {
+  padding: 10px;
+  font-size: 1em;
+}
+
+button {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  font-size: 1em;
+  border: none;
+  cursor: pointer;
+}
+
+#posts {
+  margin-top: 30px;
+}
+
+.post {
+  background-color: black;
+  color: white;
+  margin: 20px auto;
+  padding: 20px;
+  width: 60%;
+  border-radius: 10px;
+}
+
+.post img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.post input {
+  width: 80%;
+  margin-right: 10px;
+}
+
+.post button {
+  background-color: green;
+}
