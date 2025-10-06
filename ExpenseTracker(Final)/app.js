@@ -9,6 +9,9 @@ const db = require('./utils/connection')
 
 const expenses_route = require('./routers/expense_router')
 
+
+const user_route = require('./routers/user_router')
+
 require('./models/expense_model')
 
 
@@ -22,6 +25,9 @@ app.use(express.json())
 
 
  app.use('/Expenses', expenses_route)
+  
+ app.use('/user',user_route)
+
 
 db.sync().then(
 app.listen(3000,err=>{
