@@ -44,7 +44,37 @@ const adduser = async (req, res)=>{
     }
 }
 
+const validateuser = async (req, res)=>{
+  const {email , password} = req.body
+try{
+const user_exist = await user_mod.findOne({
+   where: {
+        email: email,
+      }
+})
+console.log(user_exist)
+if(!user_exist){
+  return err_response(res, {
+        StatusCode: 404,
+        message: "User not found",
+      });
+}
+if(user_exist.password != password){
+  return err_response(res, {
+        StatusCode: 401,
+        message: "User not authorized",
+      });
+}
+
+correctResponse(res, user_exist)
+
+}
+catch(err){
+  err_response(res, {StatusCode : 500,message : "unable to login into users table"})
+}
+}
 
 module.exports= {
-    adduser
+    adduser,
+    validateuser
 }

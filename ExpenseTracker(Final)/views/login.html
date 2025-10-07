@@ -9,7 +9,7 @@
 <body>
   <div class="login-container">
     <h1>Login</h1>
-    <form id="login-form">
+    <form id="login-form" onsubmit="handleFormSubmit(event)">
       <div class="input-group">
         <label for="email">Email</label>
         <input type="email" id="email" placeholder="Enter your email" required />
@@ -28,8 +28,8 @@
     </div>
   </div>
 
-  <script>
-    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+<script src="login.js"></script>
   </script>
 </body>
 </html>
