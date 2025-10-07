@@ -1,8 +1,3 @@
-const express = require('express')
-
-const app = express()
-
-
 
 
 function handleFormSubmit(event) {
@@ -14,10 +9,10 @@ function handleFormSubmit(event) {
     };
     axios
       .post(
-        "https://crudcrud.com/api/912bf6a50d274c43a2cbb2d005346346/appointmentData",
+        "http://localhost:3000/Users/adduser",
         userDetails
       )
-      .then((response) => displayUserOnScreen(response.data))
+      .then((response) => displayUserOnScreen(response.data.data))
       .catch((error) => console.log(error));
     
     // Clearing the input fields
@@ -28,10 +23,12 @@ function handleFormSubmit(event) {
   
 
 window.addEventListener('DOMContentLoaded',function(){
-    axios.get("https://crudcrud.com/api/912bf6a50d274c43a2cbb2d005346346/appointmentData")
+    axios.get("http://localhost:3000/Users/getuser")
 .then((response) =>{
-    for(var i=0;i<response.data.length;i++){
-        displayUserOnScreen(response.data[i])
+  console.log(response.data)
+    for(var i=0;i<response.data.data.length;i++){
+      console.log(response.data.data[i])
+        displayUserOnScreen(response.data.data[i])
     }
 })
 .catch((error)=>{
@@ -63,7 +60,7 @@ function displayUserOnScreen(userDetails) {
 
     // Delete Button Event Listener
     deleteBtn.addEventListener("click", function (event) {
-        axios.delete(`https://crudcrud.com/api/912bf6a50d274c43a2cbb2d005346346/appointmentData/${userDetails._id}`)
+        axios.delete(`http://localhost:3000/Users/deleteuser/${userDetails.id}`)
         .then((response)=>{
             console.log(response)
         })
@@ -79,7 +76,7 @@ function displayUserOnScreen(userDetails) {
     editBtn.addEventListener("click", function (event) {
         
       userList.removeChild(event.target.parentElement);
-      axios.delete(`https://crudcrud.com/api/912bf6a50d274c43a2cbb2d005346346/appointmentData/${userDetails._id}`)
+      axios.delete(`http://localhost:3000/Users/deleteuser/${userDetails.id}`)
         .then((response)=>{
             console.log(response)
         })
@@ -91,6 +88,5 @@ function displayUserOnScreen(userDetails) {
       document.getElementById("phone").value = userDetails.phone;
     });
 }
-//   // Do not touch code below
-//   module.exports = handleFormSubmit;
+
   
