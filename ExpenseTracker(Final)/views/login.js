@@ -10,6 +10,8 @@ async function handleFormSubmit(event) {
     const result = await axios.post("http://localhost:3000/user/login",UserDetails)
     if (result.data.status = true){
         alert('user login successful')
+        window.location.href = "index.html";
+        
     }
     }
     catch(err){
