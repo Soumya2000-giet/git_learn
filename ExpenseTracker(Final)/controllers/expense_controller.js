@@ -4,17 +4,20 @@ const Expense = require('../models/expense_model')
 
 
 const {err_response, correctResponse} = require('../utils/response_handler')
+const { where } = require('sequelize')
 
 
 const addExpense = async (req,res)=>{
 
     const {amount, desc ,  expense_type} = req.body
+    const user = req.user
 
 try {
     const result = await Expense.create({
         amount : amount,
         desc : desc,
-        expense_type :  expense_type
+        expense_type :  expense_type,
+        userId : user.id
     })
     correctResponse(res,result)
 }
@@ -27,8 +30,12 @@ try {
 }
 
 const getExpense = async(req, res)=>{
+
+    const user = req.user
     try{
-        const result = await Expense.findAll()
+        const result = await Expense.findAll({
+  where: { userId: user.id }
+})
 
         correctResponse(res,result)
     }
@@ -41,11 +48,13 @@ const getExpense = async(req, res)=>{
 
 const deleteExpense = async(req, res)=>{
     const {id }= req.params
+    const user = req.user
         
     try{
         const result = await Expense.destroy({
         where : {
-            id : id
+            id : id,
+            userId: user.id 
         },
     })
     if(!result){

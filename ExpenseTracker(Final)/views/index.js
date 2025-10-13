@@ -6,10 +6,12 @@
       desc: event.target.desc.value,
       expense_type: event.target.expense_type.value,
     };
+    const token = localStorage.getItem('token')
+    console.log(token)
     axios
       .post(
         "http://localhost:3000/Expenses/addExpense",
-        ExpenseDetails
+        ExpenseDetails,{headers : {'Authorization' : token}}
       )
       .then((response) => displayExpenseOnScreen(response.data.data))
       .catch((error) => console.log(error));
@@ -21,7 +23,8 @@
   }
 
 window.addEventListener('DOMContentLoaded',function(){
-    axios.get("http://localhost:3000/Expenses/getExpense")
+    const token = localStorage.getItem('token')
+    axios.get("http://localhost:3000/Expenses/getExpense",{headers : {'Authorization' : token}})
 .then((response) =>{
   console.log(response.data)
     for(var i=0;i<response.data.data.length;i++){
@@ -60,7 +63,8 @@ function displayExpenseOnScreen(ExpenseDetails) {
 
     // Delete Button Event Listener
     deleteBtn.addEventListener("click", function (event) {
-        axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`)
+      const token = localStorage.getItem('token')
+        axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
         })
@@ -76,7 +80,8 @@ function displayExpenseOnScreen(ExpenseDetails) {
     editBtn.addEventListener("click", function (event) {
         
       expenseList.removeChild(event.target.parentElement);
-      axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`)
+      const token = localStorage.getItem('token')
+      axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
         })

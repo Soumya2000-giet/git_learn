@@ -4,6 +4,8 @@ const user_mod = require('../models/user_model')
 
 const bcrypt = require('bcrypt')
 
+const jwt = require('jsonwebtoken')
+
 
 const {err_response, correctResponse} = require('../utils/response_handler')
 
@@ -41,6 +43,11 @@ const adduser = async (req, res)=>{
     }
 }
 
+
+function generateAcessToken(id){
+  return jwt.sign({id},'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+}
+
 const validateuser = async (req, res)=>{
   const {email , password} = req.body
 try{
@@ -63,7 +70,11 @@ bcrypt.compare(password, user_exist.password , (err,result)=>{
     throw new Error("something went wrong")
   }
   if(result === true){
-     correctResponse(res, user_exist)
+     return  res.status(200).json({
+    data: user_exist,
+    status: true,
+    token : generateAcessToken(user_exist.id)
+  })
   }
   else{
     err_response(res, {StatusCode : 500,message : "password is incorrect"})

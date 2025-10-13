@@ -12,7 +12,9 @@ const expenses_route = require('./routers/expense_router')
 
 const user_route = require('./routers/user_router')
 
-require('./models/expense_model')
+const expense_mod = require('./models/expense_model')
+
+const user_mod = require('./models/user_model')
 
 
 app.use(express.json())
@@ -28,6 +30,9 @@ app.use(express.json())
   
  app.use('/user',user_route)
 
+ user_mod.hasMany(expense_mod)
+
+ expense_mod.belongsTo(user_mod)
 
 db.sync().then(
 app.listen(3000,err=>{

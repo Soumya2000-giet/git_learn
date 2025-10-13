@@ -10,6 +10,9 @@ async function handleFormSubmit(event) {
     const result = await axios.post("http://localhost:3000/user/login",UserDetails)
     if (result.data.status = true){
         alert('user login successful')
+        localStorage.setItem('token',result.data.token)
+        window.location.href = "index.html";
+        
     }
     }
     catch(err){

@@ -2,19 +2,21 @@ const express = require('express')
 
 const e_router = express.Router()
 
+const auth = require('../middlewares/auth')
+
  const e_controller = require('../controllers/expense_controller')
 
 
 
-e_router.post('/addExpense',e_controller.addExpense)
+e_router.post('/addExpense',auth.user_auth ,e_controller.addExpense)
 
-e_router.get('/getExpense',e_controller.getExpense)
-
-
-e_router.get('/editExpense/:id',e_controller.editExpense)
+e_router.get('/getExpense',auth.user_auth ,e_controller.getExpense)
 
 
-e_router.delete('/deleteExpense/:id',e_controller.deleteExpense)
+e_router.get('/editExpense/:id',auth.user_auth,e_controller.editExpense)
+
+
+e_router.delete('/deleteExpense/:id',auth.user_auth,e_controller.deleteExpense)
 
 
 
