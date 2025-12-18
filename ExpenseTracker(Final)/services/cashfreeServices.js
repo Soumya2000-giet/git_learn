@@ -11,7 +11,7 @@ const createorder = async(
     orderCurrency = "INR",
     customerID,
     customerPhone,
-
+    token
 
 )=>{
 
@@ -24,12 +24,13 @@ const request = {
     "order_amount":  orderAmount,
     "order_currency": orderCurrency,
     "order_id": orderId,
+    "token":token,
     "customer_details": {
         "customer_id": customerID,
         "customer_phone": customerPhone
     },
     "order_meta": {
-        "return_url": `http://localhost:3000/index.html?order_id=${orderId}`,
+        "return_url": `http://localhost:3000/index.html?order_id=${orderId}&token=${token}`,
         //"return_url": `http://localhost:3000/payment/payment-status/${orderId}`,
         //  "return_url": "https://www.cashfree.com/devstudio/preview/pg/web/checkout?order_id={order_id}",
          "payment_methods": "cc,dc,upi,nb,app"

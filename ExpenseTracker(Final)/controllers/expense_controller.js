@@ -2,6 +2,10 @@ const db = require('../utils/connection')
 
 const Expense = require('../models/expense_model')
 
+const User = require('../models/user_model')
+
+const { fn, col } = require("sequelize")
+
 
 const {err_response, correctResponse} = require('../utils/response_handler')
 const { where } = require('sequelize')
@@ -45,6 +49,34 @@ const getExpense = async(req, res)=>{
         err_response(res, {StatusCode : 500,message : "unable to fetch from Expenses table"})
     }
 }
+
+const getSortedExpense = async (req, res) => {
+    try {
+        const result = await User.findAll({
+            attributes: [
+                "id",
+                "username",
+                [fn("SUM", col("expenses.amount")), "totalExpense"]
+            ],
+            include: [
+                {
+                    model: Expense,
+                    attributes: []
+                }
+            ],
+            group: ["user.id"],
+            order: [[fn("SUM", col("expenses.amount")), "DESC"]]
+        });
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error fetching leaderboard" });
+    }
+}
+
+
+
 
 const deleteExpense = async(req, res)=>{
     const {id }= req.params
@@ -99,6 +131,7 @@ module.exports ={
     addExpense,
     getExpense,
     deleteExpense,
-    editExpense
+    editExpense,
+    getSortedExpense
 }
 

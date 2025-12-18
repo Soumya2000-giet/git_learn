@@ -18,6 +18,10 @@ const process_payment = async(req, res)=>{
 
     const customerPhone = "9999999999"
 
+    const token = req.header('Authorization')
+
+    console.log(`payment controller line no 23 ${token}`)
+
 
     try{
         const paymentSessionId = await createorder(
@@ -25,7 +29,8 @@ const process_payment = async(req, res)=>{
             orderAmount,
             orderCurrency ,
             customerID,
-            customerPhone
+            customerPhone,
+            token
         )
 
 

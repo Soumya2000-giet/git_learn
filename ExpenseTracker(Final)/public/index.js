@@ -23,7 +23,7 @@
   }
 
 window.addEventListener('DOMContentLoaded', async function () {
-    const token = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
 
     console.log(`line no 28 token value is ${token}`)
 
@@ -32,9 +32,13 @@ window.addEventListener('DOMContentLoaded', async function () {
     // -------------------------------
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get("order_id");
+    const new_token = params.get("token");
+
 
     if (orderId) {
         console.log("Cashfree redirect detected. Checking payment status...");
+        token = new_token
+        localStorage.setItem('token', new_token);
 
         try {
             const response = await axios.get(
@@ -69,6 +73,8 @@ window.addEventListener('DOMContentLoaded', async function () {
         console.log(error);
     }
 });
+
+
 
 
 
@@ -155,8 +161,6 @@ document.getElementById("premiumBtn").addEventListener("click", async () => {
             redirectTarget: "_self"
         });
 
-        // Poll API to check payment status after redirect
-        checkPaymentStatus(orderId);
 
     } catch (err) {
         console.error("Payment Error:", err);
@@ -166,22 +170,6 @@ document.getElementById("premiumBtn").addEventListener("click", async () => {
 
 
 
-async function checkPaymentStatus(orderId) {
-    setTimeout(async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:3000/payment/payment-status/${orderId}`
-            );
-
-            if (response.data === "Success") {
-                localStorage.setItem("premiumUser", "true");
-                showPremiumFeatures();
-            }
-        } catch (err) {
-            console.log("Still waiting for payment confirmation...");
-        }
-    }, 4000);
-}
 
 function showPremiumFeatures() {
     document.getElementById("premiumMsg").textContent =
@@ -189,3 +177,33 @@ function showPremiumFeatures() {
     document.getElementById("leaderboardBtn").style.display = "block";
 }
   
+
+
+document.getElementById("leaderboardBtn").addEventListener("click", async () => {
+
+    try {
+        const response = await axios.get("http://localhost:3000/Expenses/premium/leaderboard", {
+            
+        });
+
+        const leaderboard = response.data;
+
+        const container = document.getElementById("leaderboardContainer");
+        container.innerHTML = "<h2>Leaderboard</h2>";
+
+        const list = document.createElement("ol"); // ordered list for ranking
+
+        leaderboard.forEach(user => {
+            const item = document.createElement("li");
+            item.textContent = `${user.username} - ₹${user.totalExpense}`;
+            list.appendChild(item);
+        });
+
+        container.appendChild(list);
+
+    } catch (err) {
+        console.log(err);
+        alert("Error loading leaderboard.");
+    }
+});
+

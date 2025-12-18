@@ -13,6 +13,9 @@ e_router.post('/addExpense',auth.user_auth ,e_controller.addExpense)
 e_router.get('/getExpense',auth.user_auth ,e_controller.getExpense)
 
 
+e_router.get('/premium/leaderboard',e_controller.getSortedExpense)
+
+
 e_router.get('/editExpense/:id',auth.user_auth,e_controller.editExpense)
 
 
