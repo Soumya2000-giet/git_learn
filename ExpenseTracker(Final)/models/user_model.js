@@ -24,6 +24,9 @@ const User = sequelize.define('user',{
         type:DataTypes.STRING,
         allowNull:false,
         unique:false
+    },
+    total_expense:{
+        type:DataTypes.INTEGER
     }
 })
 

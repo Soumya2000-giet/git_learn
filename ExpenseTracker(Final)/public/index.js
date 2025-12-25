@@ -195,7 +195,7 @@ document.getElementById("leaderboardBtn").addEventListener("click", async () => 
 
         leaderboard.forEach(user => {
             const item = document.createElement("li");
-            item.textContent = `${user.username} - ₹${user.totalExpense}`;
+            item.textContent = `${user.username} - ₹${user.total_expense}`;
             list.appendChild(item);
         });
 

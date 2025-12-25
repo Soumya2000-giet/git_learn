@@ -23,6 +23,17 @@ try {
         expense_type :  expense_type,
         userId : user.id
     })
+
+    const total_expense = Number(user.total_expense) + Number(amount);
+
+    await User_mod.update(
+        {total_expense},
+            {
+                where :{
+                    id : user.id
+                }
+            }, 
+    )
     correctResponse(res,result)
 }
 
@@ -50,22 +61,40 @@ const getExpense = async(req, res)=>{
     }
 }
 
+// const getSortedExpense = async (req, res) => {
+//     try {
+//         const result = await User.findAll({
+//             attributes: [
+//                 "id",
+//                 "username",
+//                 [fn("SUM", col("expenses.amount")), "totalExpense"]
+//             ],
+//             include: [
+//                 {
+//                     model: Expense,
+//                     attributes: []
+//                 }
+//             ],
+//             group: ["user.id"],
+//             order: [[fn("SUM", col("expenses.amount")), "DESC"]]
+//         });
+
+//         res.status(200).json(result);
+//     } catch (err) {
+//         console.log(err);
+//         return res.status(500).json({ message: "Error fetching leaderboard" });
+//     }
+// }
+
+
 const getSortedExpense = async (req, res) => {
     try {
         const result = await User.findAll({
             attributes: [
-                "id",
                 "username",
-                [fn("SUM", col("expenses.amount")), "totalExpense"]
+                "total_expense"
             ],
-            include: [
-                {
-                    model: Expense,
-                    attributes: []
-                }
-            ],
-            group: ["user.id"],
-            order: [[fn("SUM", col("expenses.amount")), "DESC"]]
+            order: [["total_expense", "DESC"]]
         });
 
         res.status(200).json(result);
@@ -74,7 +103,6 @@ const getSortedExpense = async (req, res) => {
         return res.status(500).json({ message: "Error fetching leaderboard" });
     }
 }
-
 
 
 
