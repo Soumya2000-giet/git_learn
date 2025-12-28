@@ -26,7 +26,7 @@ try {
 
     const total_expense = Number(user.total_expense) + Number(amount);
 
-    await User_mod.update(
+    await User.update(
         {total_expense},
             {
                 where :{

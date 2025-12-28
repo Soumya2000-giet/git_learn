@@ -207,3 +207,37 @@ document.getElementById("leaderboardBtn").addEventListener("click", async () => 
     }
 });
 
+
+
+document.getElementById("aiExpenseBtn").addEventListener("click", async () => {
+try{
+    const desc = document.getElementById("desc").value
+    const input_text = `please give a single category for ${desc} falls under which category from these food ,fuel ,movie ,shopping `
+    const response_text = await axios.post(
+        "http://localhost:3000/user/predictCategory",
+        {input_text}
+    )
+
+    let category = response_text.data.data.trim().toLowerCase();
+
+    console.log("AI Category:", category);
+
+
+    const categorySelect = document.getElementById("expense_type");
+
+    const allowedCategories = Array.from(categorySelect.options)
+        .map(option => option.value.toLowerCase());
+
+    if (allowedCategories.includes(category)) {
+        categorySelect.value = category;
+    } else {
+        alert(`AI returned unknown category: ${category}`);
+    }
+}
+catch(err){  
+console.log(`${err}`)
+alert("Error loading leaderboard.");
+}
+   
+});
+

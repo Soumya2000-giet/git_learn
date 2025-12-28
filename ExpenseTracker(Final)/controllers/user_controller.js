@@ -6,8 +6,48 @@ const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
 
+const dotenv = require('dotenv')
+
+const { GoogleGenAI } = require('@google/genai')
+
+dotenv.config();
+
+
 
 const {err_response, correctResponse} = require('../utils/response_handler')
+
+
+const airesponse = async (req, res) =>{
+
+  try{
+
+    const { input_text } = req.body;
+    console.log(`requested text is ${input_text}`)
+
+    const ai = new GoogleGenAI({apiKey : process.env.GEMINI_API_KEY});
+
+    const response_ai = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: input_text,
+  });
+    console.log(response_ai.text);
+let cleanedText = response_ai.text;
+
+cleanedText = cleanedText
+  .replace(/\*\*/g, "")
+  .replace(/,\s*\d+/g, "")
+  .trim();
+
+correctResponse(res, cleanedText);
+
+
+  }
+
+  catch(err){
+     console.log(`${err}`)
+     return res.status(400).json({err : `error in generating ai response ${err}`});
+  }
+}
 
 
 const adduser = async (req, res)=>{
@@ -89,5 +129,6 @@ catch(err){
 
 module.exports= {
     adduser,
-    validateuser
+    validateuser,
+    airesponse
 }
