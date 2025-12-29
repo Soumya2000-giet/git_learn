@@ -9,6 +9,7 @@ const { fn, col } = require("sequelize")
 
 const {err_response, correctResponse} = require('../utils/response_handler')
 const { where } = require('sequelize')
+const sequelize = require('../utils/connection')
 
 
 const addExpense = async (req,res)=>{
@@ -16,13 +17,14 @@ const addExpense = async (req,res)=>{
     const {amount, desc ,  expense_type} = req.body
     const user = req.user
 
+    const t = await sequelize.transaction()
 try {
     const result = await Expense.create({
         amount : amount,
         desc : desc,
         expense_type :  expense_type,
         userId : user.id
-    })
+    }, {transaction : t})
 
     const total_expense = Number(user.total_expense) + Number(amount);
 
@@ -31,15 +33,18 @@ try {
             {
                 where :{
                     id : user.id
-                }
+                },
+                transaction : t
             }, 
     )
+    t.commit()
     correctResponse(res,result)
 }
 
 
  catch(err){
         console.log(err)
+        t.rollback()
          err_response(res, {StatusCode : 500,message : "unable to add data into Expenses table"})
     }
 }
@@ -109,6 +114,7 @@ const getSortedExpense = async (req, res) => {
 const deleteExpense = async(req, res)=>{
     const {id }= req.params
     const user = req.user
+    const t = await sequelize.transaction()
         
     try{
         const result = await Expense.destroy({
@@ -116,14 +122,17 @@ const deleteExpense = async(req, res)=>{
             id : id,
             userId: user.id 
         },
+        transaction : t
     })
     if(!result){
         err_response(res, {StatusCode : 500,message : `unable to find expense with id ${id}`})
     }
+    t.commit()
      correctResponse(res,result)
     }
     catch(err){
         console.log(err)
+        t.rollback()
          err_response(res, {StatusCode : 500,message : "unable to delete data from Expenses table"})
     }
 }
@@ -132,6 +141,7 @@ const editExpense = async (req,res)=>{
     const {amount , desc, expense_type}  = req.body
 
     const {id} =req.params
+    const t = await sequelize.transaction()
 
     try{
          const Expense = await Expense.findByPk(id)
@@ -142,11 +152,13 @@ const editExpense = async (req,res)=>{
          Expense.amount = amount
          Expense.desc = desc
          Expense.expense_type =  expense_type
-         const result = await Expense.save()
+         const result = await Expense.save({transaction : t})
+         t.commit()
           correctResponse(res,result)
     }
     catch(err){
         console.log(err)
+        t.rollback()
          err_response(res, {StatusCode : 500,message : "unable to update Expense table "})
     }
    
