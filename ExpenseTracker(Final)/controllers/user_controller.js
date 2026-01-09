@@ -13,9 +13,53 @@ const { GoogleGenAI } = require('@google/genai')
 dotenv.config();
 
 
+const Sib = require('sib-api-v3-sdk')
+
+const client = Sib.ApiClient.instance
+
+
+const apiKey = client.authentications['api-key']
+
+apiKey.apiKey = process.env.API_KEY
+
+
 
 const {err_response, correctResponse} = require('../utils/response_handler')
 
+const resetPassword = async (req, res) =>{
+
+  try{
+
+    const transEmailApi = new Sib.TransactionalEmailsApi()
+
+
+    const sender = {
+
+      email : 'soumyaranjanpradhan734@gmail.com'
+    }
+
+    const receivers = [
+      {
+        email : 'soumyaranjanpradhan735@gmail.com'
+      }
+    ]
+
+    const result = await transEmailApi.sendTransacEmail({
+      sender,
+      to : receivers,
+      Subject :'sending demo mail for testing',
+      textContent : `this a demo mail to check the functionality`
+    })
+
+    console.log(result)
+
+  }
+  catch(err){
+     console.log(`${err}`)
+     return res.status(400).json({err : `error in sending email ${err}`});
+
+  }
+}
 
 const airesponse = async (req, res) =>{
 
@@ -130,5 +174,6 @@ catch(err){
 module.exports= {
     adduser,
     validateuser,
-    airesponse
+    airesponse,
+    resetPassword
 }

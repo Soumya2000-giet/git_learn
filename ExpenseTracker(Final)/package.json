@@ -26,6 +26,7 @@
     "express-handlebars": "^8.0.1",
     "mysql2": "^3.13.0",
     "pug": "^3.0.3",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "sib-api-v3-sdk": "^8.5.0"
   }
 }
