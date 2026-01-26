@@ -1,6 +1,12 @@
 const db = require('../utils/connection')
 
+// const uuid = require('uuid');
+
+const { v4: uuidv4 } = require('uuid');
+
 const user_mod = require('../models/user_model')
+
+const forgot_p_tl = require('../models/forgot_passowrd')
 
 const bcrypt = require('bcrypt')
 
@@ -26,9 +32,35 @@ apiKey.apiKey = process.env.API_KEY
 
 const {err_response, correctResponse} = require('../utils/response_handler')
 
-const resetPassword = async (req, res) =>{
-
+const forgotPassword = async (req, res) =>{
+    
   try{
+
+    const {email} = req.body
+
+    
+
+
+    const user_exist = await user_mod.findOne({
+   where: {
+        email: email,
+      }
+    })
+
+  if(!user_exist){
+    return err_response(res, {
+          StatusCode: 404,
+          message: "User doesn't exists",
+        });
+    }
+
+    const id = uuidv4();
+
+    const f_res = await forgot_p_tl.create({
+      id : id,
+      isactive : true,
+      userId : user_exist.id
+    })
 
     const transEmailApi = new Sib.TransactionalEmailsApi()
 
@@ -40,18 +72,20 @@ const resetPassword = async (req, res) =>{
 
     const receivers = [
       {
-        email : 'soumyaranjanpradhan735@gmail.com'
+        email : email
       }
     ]
 
     const result = await transEmailApi.sendTransacEmail({
       sender,
       to : receivers,
-      Subject :'sending demo mail for testing',
-      textContent : `this a demo mail to check the functionality`
+      Subject :'Reset password',
+      // textContent : ``
+      htmlcontent : `<a href="http://localhost:3000/user/password/resetPassword/${id}">Reset password</a>`
     })
 
     console.log(result)
+    correctResponse(res, result)
 
   }
   catch(err){
@@ -61,6 +95,117 @@ const resetPassword = async (req, res) =>{
   }
 }
 
+
+const resetPassword = async(req, res) =>{
+
+try{
+
+  const {id} = req.params
+
+
+  const request_data = await forgot_p_tl.findOne({where :{id}})
+
+
+  if (!request_data){
+
+    return err_response(res, {
+          StatusCode: 404,
+          message: "request link doesn't exists",
+        });
+
+  }
+
+  await request_data.update({ isactive: false})
+
+
+  res.status(200).send(`<html>
+                                    <script>
+                                        function formsubmitted(e){
+                                            e.preventDefault();
+                                            console.log('called')
+                                        }
+                                    </script>
+
+                                    <form action="/user/password/updatePassword/${id}" method="post">
+                                        <label for="newpassword">Enter New password</label>
+                                        <input name="newpassword" type="password" required></input></br>
+                                         <label for="re_newpassword">Re-enter New password</label>
+                                        <input name="re_newpassword" type="password" required></input></br>
+                                        <button>reset password</button>
+                                    </form>
+                                </html>`
+                                )
+  res.end()
+
+  
+}
+catch(err){
+  console.log(`${err}`)
+     return res.status(400).json({err : `error in resetting password ${err}`});
+
+}
+
+}
+
+const updatePassword = async (req, res)=>{
+  try{
+    const {id} = req.params
+
+    const {newpassword ,re_newpassword } = req.body
+
+    if (newpassword != re_newpassword){
+      // throw new Error("both the passwords are not matching")
+
+      return err_response(res, {
+          StatusCode: 404,
+          message: "both the passwords are not matching",
+        });
+    }
+
+    const request_data = await forgot_p_tl.findOne({where :{id}})
+
+    if (!request_data){
+      //  throw new Error("request id does n't exists")
+
+       return err_response(res, {
+          StatusCode: 404,
+          message: "request id does n't exists",
+        });
+
+    }
+
+    const User_data = await user_mod.findOne({where : {
+      id : request_data.userId
+    }})
+
+    if (!User_data){
+      // throw new Error("User not available")
+
+      return err_response(res, {
+          StatusCode: 404,
+          message: "User not available",
+        });
+      
+    }
+
+    bcrypt.hash(newpassword,10 , async (err ,hash)=>{
+      const result = await User_data.update({
+            password : hash
+        })
+        // correctResponse(res, result)
+
+         correctResponse(res, {
+    message: "Password updated successfully"
+  });
+    })
+
+
+  }
+  catch(err){
+     console.log(`${err}`)
+     return res.status(400).json({err : `error in updating password ${err}`});
+  }
+}
 const airesponse = async (req, res) =>{
 
   try{
@@ -175,5 +320,7 @@ module.exports= {
     adduser,
     validateuser,
     airesponse,
-    resetPassword
+    forgotPassword,
+    resetPassword,
+    updatePassword
 }

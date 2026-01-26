@@ -20,9 +20,11 @@ const user_mod = require('./models/user_model')
 
 const payment_mod = require('./models/payment_model')
 
+const forgot_password = require('./models/forgot_passowrd')
 
 
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
 const path = require("path");
@@ -48,6 +50,10 @@ app.use(express.static(path.join(__dirname, "public")));
  user_mod.hasMany(expense_mod)
 
  expense_mod.belongsTo(user_mod)
+
+ user_mod.hasMany(forgot_password)
+ 
+ forgot_password.belongsTo(user_mod)
 
 db.sync().then(
 app.listen(3000,err=>{

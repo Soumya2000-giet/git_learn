@@ -12,7 +12,11 @@ u_router.post('/login',u_controller.validateuser)
 
 u_router.post('/predictCategory',u_controller.airesponse)
 
-u_router.post('/password/forgotpassword',u_controller.resetPassword)
+u_router.post('/password/forgotpassword',u_controller.forgotPassword)
+
+u_router.get('/password/resetPassword/:id',u_controller.resetPassword)
+
+u_router.post('/password/updatePassword/:id',u_controller.updatePassword)
 
 
 module.exports = u_router
