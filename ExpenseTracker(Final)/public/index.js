@@ -175,6 +175,8 @@ function showPremiumFeatures() {
     document.getElementById("premiumMsg").textContent =
         " You are a Premium User!";
     document.getElementById("leaderboardBtn").style.display = "block";
+
+    document.getElementById("downloadBtn").disabled = false;
 }
   
 
@@ -239,5 +241,36 @@ console.log(`${err}`)
 alert("Error loading leaderboard.");
 }
    
+});
+
+
+
+document.getElementById("downloadBtn").addEventListener("click", async () => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(
+            "http://localhost:3000/Expenses/download",
+            {
+                headers: { Authorization: token },
+                responseType: "blob" // IMPORTANT
+            }
+        );
+
+        // Create downloadable file
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "expenses.csv";
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.log(err);
+        alert("Error downloading expenses");
+    }
 });
 

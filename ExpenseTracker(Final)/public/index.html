@@ -43,6 +43,23 @@
         cursor: pointer;
         font-weight: bold;
         }
+
+        #downloadBtn {
+    margin-top: 10px;
+    padding: 10px;
+    background: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#downloadBtn:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+
     </style>
 </head>
 <body>
@@ -63,6 +80,7 @@
         <button type="submit" id ="btn">Add Expense</button>
         <button type="button" id="aiExpenseBtn">🧠 AI Categorize</button>
          <button id="leaderboardBtn">Leaderboard</button>
+         <button id="downloadBtn" disabled>⬇ Download Expenses</button>
          <div id="leaderboardContainer"></div>
         <ul>
         </ul>
