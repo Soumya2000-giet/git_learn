@@ -13,7 +13,9 @@
         "http://localhost:3000/Expenses/addExpense",
         ExpenseDetails,{headers : {'Authorization' : token}}
       )
-      .then((response) => displayExpenseOnScreen(response.data.data))
+      //.then((response) => window.location.reload())
+      //.then((response) => displayExpenseOnScreen(response.data.data))
+      .then((response) =>loadExpenses(1))
       .catch((error) => console.log(error));
     
     // Clearing the input fields
@@ -61,23 +63,98 @@ window.addEventListener('DOMContentLoaded', async function () {
     // 2. LOAD EXPENSES (original code)
     // -------------------------------
     try {
+        // const response = await axios.get(
+        //     "http://localhost:3000/Expenses/getExpense",
+        //     { headers: { Authorization: token } }
+        // );
+
+        // for (let i = 0; i < response.data.data.length; i++) {
+        //     displayExpenseOnScreen(response.data.data[i]);
+        // }
+        const page = 1
         const response = await axios.get(
-            "http://localhost:3000/Expenses/getExpense",
+             `http://localhost:3000/Expenses/getExpensePagination?page=${page}`,
             { headers: { Authorization: token } }
         );
+        console.log(response.data)
 
-        for (let i = 0; i < response.data.data.length; i++) {
+        const { data, ...paginationInfo } = response.data;
+
+        for (let i = 0; i < data.length; i++) {
             displayExpenseOnScreen(response.data.data[i]);
+           
         }
-    } catch (error) {
+       paginationdata(paginationInfo)
+    } 
+    
+    catch (error) {
         console.log(error);
     }
 });
 
+async function loadExpenses(page) {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(
+    `http://localhost:3000/Expenses/getExpensePagination?page=${page}`,
+    { headers: { Authorization: token } }
+  );
+
+  const {
+    data,
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPreviousPage,
+    previousPage,
+    lastPage
+  } = response.data;
+
+  // Clear list
+  document.querySelector("ul").innerHTML = "";
+
+  data.forEach(displayExpenseOnScreen);
+
+  paginationdata({
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPreviousPage,
+    previousPage,
+    lastPage
+  });
+}
 
 
+function paginationdata({
+  currentPage,
+  hasNextPage,
+  nextPage,
+  hasPreviousPage,
+  previousPage,
+  lastPage
+}) {
+  const container = document.getElementById("paginationContainer");
+  container.innerHTML = "";
 
+  if (hasPreviousPage) {
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = `Prev (${previousPage})`;
+    prevBtn.onclick = () => loadExpenses(previousPage);
+    container.appendChild(prevBtn);
+  }
 
+  const current = document.createElement("span");
+  current.textContent = ` Page ${currentPage} of ${lastPage} `;
+  container.appendChild(current);
+
+  if (hasNextPage) {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = `Next (${nextPage})`;
+    nextBtn.onclick = () => loadExpenses(nextPage);
+    container.appendChild(nextBtn);
+  }
+}
 
 function displayExpenseOnScreen(ExpenseDetails) {
     const expenseItem = document.createElement("li");

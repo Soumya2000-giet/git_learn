@@ -53,9 +53,10 @@ const getExpense = async(req, res)=>{
 
     const user = req.user
     try{
+
         const result = await Expense.findAll({
-  where: { userId: user.id }
-})
+        where: { userId: user.id }
+        })
 
         correctResponse(res,result)
     }
@@ -65,6 +66,45 @@ const getExpense = async(req, res)=>{
         err_response(res, {StatusCode : 500,message : "unable to fetch from Expenses table"})
     }
 }
+
+
+const getExpense_pagination = async(req, res)=>{
+
+    const user = req.user
+
+    const page = parseInt(req.query.page) || 1;
+
+    const ITEMS_PER_PAGE = 5
+    try{
+
+        const total_expense = await Expense.count({where :{ userId: user.id } })
+        const result = await Expense.findAll({
+        where: { userId: user.id },
+        offset : (page -1) * ITEMS_PER_PAGE,
+        limit : ITEMS_PER_PAGE,
+        order: [['createdAt', 'DESC']]
+        })
+
+        // correctResponse(res,result)
+        return res.status(200).json({
+                                        data: result,
+                                        currentPage : page,
+                                        hasNextPage : ITEMS_PER_PAGE*page < total_expense,
+                                        nextPage : page + 1,
+                                        hasPreviousPage : page >1,
+                                        previousPage : page -1 ,
+                                        lastPage : Math.ceil(total_expense/ITEMS_PER_PAGE),
+                                        status: true,
+                                        });
+    }
+
+    catch(err){
+        console.log(err)
+        err_response(res, {StatusCode : 500,message : "Unable to fetch expenses with pagination"})
+    }
+}
+
+
 
 // const getSortedExpense = async (req, res) => {
 //     try {
@@ -172,6 +212,7 @@ module.exports ={
     getExpense,
     deleteExpense,
     editExpense,
-    getSortedExpense
+    getSortedExpense,
+    getExpense_pagination
 }
 
