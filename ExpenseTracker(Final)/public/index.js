@@ -1,12 +1,24 @@
 
+  function getCurrentPage() {
+  return parseInt(localStorage.getItem("currentPage")) || 1;
+}
+
+function setCurrentPage(page) {
+  localStorage.setItem("currentPage", page);
+}
+  
   function handleFormSubmit(event) {
     event.preventDefault();
+
+    
     const ExpenseDetails = {
       amount: event.target.amount.value,
       desc: event.target.desc.value,
       expense_type: event.target.expense_type.value,
     };
+    const Items_per_page = document.getElementById("itemsPerPage").value
     const token = localStorage.getItem('token')
+    setCurrentPage(1);
     console.log(token)
     axios
       .post(
@@ -15,7 +27,7 @@
       )
       //.then((response) => window.location.reload())
       //.then((response) => displayExpenseOnScreen(response.data.data))
-      .then((response) =>loadExpenses(1))
+      .then((response) =>loadExpenses(Items_per_page))
       .catch((error) => console.log(error));
     
     // Clearing the input fields
@@ -26,6 +38,9 @@
 
 window.addEventListener('DOMContentLoaded', async function () {
     let token = localStorage.getItem('token');
+    setCurrentPage(1);
+
+    const Items_per_page = document.getElementById("itemsPerPage").value
 
     console.log(`line no 28 token value is ${token}`)
 
@@ -71,20 +86,8 @@ window.addEventListener('DOMContentLoaded', async function () {
         // for (let i = 0; i < response.data.data.length; i++) {
         //     displayExpenseOnScreen(response.data.data[i]);
         // }
-        const page = 1
-        const response = await axios.get(
-             `http://localhost:3000/Expenses/getExpensePagination?page=${page}`,
-            { headers: { Authorization: token } }
-        );
-        console.log(response.data)
-
-        const { data, ...paginationInfo } = response.data;
-
-        for (let i = 0; i < data.length; i++) {
-            displayExpenseOnScreen(response.data.data[i]);
-           
-        }
-       paginationdata(paginationInfo)
+    console.log(`items per page ${Items_per_page}`)
+      await loadExpenses(Items_per_page);
     } 
     
     catch (error) {
@@ -92,11 +95,14 @@ window.addEventListener('DOMContentLoaded', async function () {
     }
 });
 
-async function loadExpenses(page) {
+async function loadExpenses( Items_per_page) {
   const token = localStorage.getItem("token");
+   const page = getCurrentPage();
+
+  
 
   const response = await axios.get(
-    `http://localhost:3000/Expenses/getExpensePagination?page=${page}`,
+    `http://localhost:3000/Expenses/getExpensePagination?page=${page}&limit=${Items_per_page}`,
     { headers: { Authorization: token } }
   );
 
@@ -121,7 +127,8 @@ async function loadExpenses(page) {
     nextPage,
     hasPreviousPage,
     previousPage,
-    lastPage
+    lastPage,
+    Items_per_page
   });
 }
 
@@ -132,15 +139,23 @@ function paginationdata({
   nextPage,
   hasPreviousPage,
   previousPage,
-  lastPage
+  lastPage,
+  Items_per_page
 }) {
+
   const container = document.getElementById("paginationContainer");
   container.innerHTML = "";
 
+  
+
   if (hasPreviousPage) {
     const prevBtn = document.createElement("button");
+    prevBtn.type = "button";
     prevBtn.textContent = `Prev (${previousPage})`;
-    prevBtn.onclick = () => loadExpenses(previousPage);
+    prevBtn.onclick = () => {
+         setCurrentPage(previousPage);
+         loadExpenses(Items_per_page);
+    }
     container.appendChild(prevBtn);
   }
 
@@ -150,11 +165,17 @@ function paginationdata({
 
   if (hasNextPage) {
     const nextBtn = document.createElement("button");
+    nextBtn.type = "button";
     nextBtn.textContent = `Next (${nextPage})`;
-    nextBtn.onclick = () => loadExpenses(nextPage);
+    nextBtn.onclick = () => {
+        setCurrentPage(nextPage);
+        loadExpenses(Items_per_page);
+    }
     container.appendChild(nextBtn);
   }
 }
+
+
 
 function displayExpenseOnScreen(ExpenseDetails) {
     const expenseItem = document.createElement("li");
@@ -183,6 +204,8 @@ function displayExpenseOnScreen(ExpenseDetails) {
         axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
+             
+             loadExpenses(document.getElementById("itemsPerPage").value);
         })
         .catch((error)=>{
             console.log(error)
@@ -200,6 +223,8 @@ function displayExpenseOnScreen(ExpenseDetails) {
       axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
+            
+             loadExpenses(document.getElementById("itemsPerPage").value);
         })
         .catch((error)=>{
             console.log(error)
@@ -349,5 +374,17 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
         console.log(err);
         alert("Error downloading expenses");
     }
+});
+
+
+
+document.getElementById("itemsPerPage").addEventListener("change", () => {
+  const Items_per_page =
+    parseInt(document.getElementById("itemsPerPage").value) || 10;
+
+  console.log("Items per page changed to:", Items_per_page);
+
+  setCurrentPage(1);          // reset to first page
+  loadExpenses(Items_per_page); // reload expenses
 });
 

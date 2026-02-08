@@ -74,7 +74,12 @@ const getExpense_pagination = async(req, res)=>{
 
     const page = parseInt(req.query.page) || 1;
 
-    const ITEMS_PER_PAGE = 5
+    console.log(`items per page ${req.query.limit}`)
+
+    const ITEMS_PER_PAGE = parseInt(req.query.limit) || 1;
+
+    
+    
     try{
 
         const total_expense = await Expense.count({where :{ userId: user.id } })
