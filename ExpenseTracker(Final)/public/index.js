@@ -349,26 +349,29 @@ alert("Error loading leaderboard.");
 
 document.getElementById("downloadBtn").addEventListener("click", async () => {
     try {
+    
         const token = localStorage.getItem("token");
 
         const response = await axios.get(
-            "http://localhost:3000/Expenses/download",
+            "http://localhost:3000/Expenses/downloadExpenses",
             {
                 headers: { Authorization: token },
-                responseType: "blob" // IMPORTANT
+                
             }
         );
 
+        console.log(response.data.fileURL)
+
         // Create downloadable file
-        const blob = new Blob([response.data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
+        // const blob = new Blob([response.data], { type: "text/csv" });
+        // const url = window.URL.createObjectURL(blob);
 
         const a = document.createElement("a");
-        a.href = url;
+        a.href = response.data.fileURL;
         a.download = "expenses.csv";
         a.click();
 
-        window.URL.revokeObjectURL(url);
+        // window.URL.revokeObjectURL(url);
 
     } catch (err) {
         console.log(err);

@@ -14,6 +14,7 @@ e_router.get('/getExpense',auth.user_auth ,e_controller.getExpense)
 
 e_router.get('/getExpensePagination',auth.user_auth ,e_controller.getExpense_pagination)
 
+e_router.get('/downloadExpenses',auth.user_auth,e_controller.downloadExpense)
 
 
 e_router.get('/premium/leaderboard',e_controller.getSortedExpense)

@@ -4,7 +4,13 @@ const Expense = require('../models/expense_model')
 
 const User = require('../models/user_model')
 
+const download = require('../models/download_model')
+
 const { fn, col } = require("sequelize")
+
+require('dotenv').config();
+
+const aws = require("aws-sdk")
 
 
 const {err_response, correctResponse} = require('../utils/response_handler')
@@ -212,12 +218,78 @@ const editExpense = async (req,res)=>{
     
 }
 
+const s3upload = async (data, filename) =>{
+
+    const BUCKET_NAME = process.env.AWS_BUCKET_NAME
+    const IAM_USER_KEY = process.env.AWS_IAM_USER_KEY
+    const IAM_USER_SECRET = process.env.AWS_IAM_USER_SECRET
+
+
+    let s3Bucket = new aws.S3({
+        accessKeyId : IAM_USER_KEY,
+        secretAccessKey : IAM_USER_SECRET
+    })
+
+    var params = {
+        Bucket : BUCKET_NAME,
+        Key : filename,
+        Body : data,
+        ACL :'public-read'
+    }
+    return new Promise((resolve , reject)=>{
+        s3Bucket.upload(params, (err, s3response)=>{
+        if(err){
+            console.log('something went wrong', err)
+            reject(err)
+        }
+        else{
+            console.log('success', s3response)
+            resolve(s3response.Location)
+        }
+    })
+    })
+   
+
+
+}
+
+
+const downloadExpense = async (req, res) =>{
+
+    try{
+
+        const expenses = await req.user.getExpenses()
+
+        const stringifyedExpenses = JSON.stringify(expenses);
+
+        const filename = `Expenses-${req.user.username}-${Date.now()}.txt`
+
+
+        const s3Url = await s3upload(stringifyedExpenses, filename)
+
+        await download.create({
+            url : s3Url,
+            username : User.username
+        })
+        res.status(200).json({
+            fileURL: s3Url,
+            success: true
+        });
+    }
+
+    catch(err){
+        console.log(err)
+        err_response(res, {StatusCode : 500,message : "unable to upload into s3 "})
+    }
+}
+
 module.exports ={
     addExpense,
     getExpense,
     deleteExpense,
     editExpense,
     getSortedExpense,
-    getExpense_pagination
+    getExpense_pagination,
+    downloadExpense
 }
 
