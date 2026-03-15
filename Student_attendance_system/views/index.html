@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Attendance System</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="left">
+      <label for="date-input" class="label">Select Date:</label>
+      <input type="date" id="date-input"/>
+      <button id="search-btn" class="btn btn-blue">Search</button>
+    </div>
+    <div class="right">
+      <button id="report-btn" class="btn btn-green">Fetch Attendance Report</button>
+    </div>
+  </div>
+
+  <div id="attendance-container" class="card"></div>
+
+  <div class="actions">
+    <button id="mark-btn" class="btn btn-lightbrown" style="display:none;">Mark Attendance</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

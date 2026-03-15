@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Post</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Create Post</h1>
+  <div class="form-container">
+    <input type="text" id="post-link" placeholder="Post Link (Image URL)" required />
+    <textarea id="post-desc" placeholder="Post Description" required></textarea>
+    <button id="create-btn">Create Post</button>
+  </div>
+
+  <h2>Posts</h2>
+  <div id="posts"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+/* ---------- Base Styles ---------- */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------- Expense Form Container ---------- */
+form {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #333;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Labels & Inputs ---------- */
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus,
+select:focus {
+  border-color: #6a82fb;
+}
+
+/* ---------- Add Button ---------- */
+#btn {
+  margin-top: 1.2rem;
+  width: 100%;
+  background-color: #6a82fb;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#btn:hover {
+  background-color: #5b73e8;
+}
+
+/* ---------- Expense List ---------- */
+ul {
+  list-style-type: none;
+  margin-top: 1.5rem;
+  padding: 0;
+}
+
+ul li {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 0.8rem;
+  margin-bottom: 0.7rem;
+  border-radius: 8px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+ul li:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Expense Text ---------- */
+ul li span {
+  flex: 1;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* ---------- Buttons inside list ---------- */
+ul li button {
+  border: none;
+  color: white;
+  padding: 0.4rem 0.7rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-left: 0.4rem;
+  transition: background 0.2s;
+}
+
+/* Delete Button */
+ul li button:first-of-type {
+  background-color: #ff4d4f;
+}
+
+ul li button:first-of-type:hover {
+  background-color: #d9363e;
+}
+
+/* Edit Button */
+ul li button:last-of-type {
+  background-color: #28a745;
+}
+
+ul li button:last-of-type:hover {
+  background-color: #1e8f39;
+}
+
+/* ---------- Scrollbar Styling ---------- */
+form::-webkit-scrollbar {
+  width: 6px;
+}
+form::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+form::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
