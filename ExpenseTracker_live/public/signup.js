@@ -7,7 +7,7 @@ async function handleFormSubmit(event) {
     };
     axios
       .post(
-        "http://localhost:3000/user/adduser",
+        "/user/adduser",
         UserDetails
       )
       .then((response) => {alert("user Registaration successful")
