@@ -4,7 +4,7 @@ const cashfree = Cashfree({
 
 document.getElementById("renderBtn").addEventListener("click", async () => {  
     try {
-        const result = await axios.post("http://localhost:3000/payment/pay");
+        const result = await axios.post("/payment/pay");
         
         // Backend sends { paymentSessionId, orderId }
         const payment_session_id = result.data.paymentSessionId;

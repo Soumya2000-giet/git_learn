@@ -8,7 +8,7 @@ async function handleFormSubmit(event) {
 
   try {
     const result = await axios.post(
-      "http://localhost:3000/user/login",
+      "/user/login",
       UserDetails
     );
 
@@ -39,7 +39,7 @@ async function handleForgotPassword(event) {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/user/password/forgotpassword",
+      "/user/password/forgotpassword",
       { email }
     );
 

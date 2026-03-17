@@ -22,7 +22,7 @@ function setCurrentPage(page) {
     console.log(token)
     axios
       .post(
-        "http://localhost:3000/Expenses/addExpense",
+        "/Expenses/addExpense",
         ExpenseDetails,{headers : {'Authorization' : token}}
       )
       //.then((response) => window.location.reload())
@@ -59,7 +59,7 @@ window.addEventListener('DOMContentLoaded', async function () {
 
         try {
             const response = await axios.get(
-                `http://localhost:3000/payment/payment-status/${orderId}`
+                `/payment/payment-status/${orderId}`
             );
 
             if (response.data === "Success") {
@@ -79,7 +79,7 @@ window.addEventListener('DOMContentLoaded', async function () {
     // -------------------------------
     try {
         // const response = await axios.get(
-        //     "http://localhost:3000/Expenses/getExpense",
+        //     "/Expenses/getExpense",
         //     { headers: { Authorization: token } }
         // );
 
@@ -102,7 +102,7 @@ async function loadExpenses( Items_per_page) {
   
 
   const response = await axios.get(
-    `http://localhost:3000/Expenses/getExpensePagination?page=${page}&limit=${Items_per_page}`,
+    `/Expenses/getExpensePagination?page=${page}&limit=${Items_per_page}`,
     { headers: { Authorization: token } }
   );
 
@@ -201,7 +201,7 @@ function displayExpenseOnScreen(ExpenseDetails) {
     // Delete Button Event Listener
     deleteBtn.addEventListener("click", function (event) {
       const token = localStorage.getItem('token')
-        axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
+        axios.delete(`/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
              
@@ -220,7 +220,7 @@ function displayExpenseOnScreen(ExpenseDetails) {
         
       expenseList.removeChild(event.target.parentElement);
       const token = localStorage.getItem('token')
-      axios.delete(`http://localhost:3000/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
+      axios.delete(`/Expenses/deleteExpense/${ExpenseDetails.id}`,{headers : {'Authorization' : token}})
         .then((response)=>{
             console.log(response)
             
@@ -250,7 +250,7 @@ document.getElementById("premiumBtn").addEventListener("click", async () => {
         console.log(`line no 140 ${token}`)
 
         const result = await axios.post(
-            "http://localhost:3000/payment/pay",
+            "/payment/pay",
             {},
              { headers: { Authorization: token } }
         );
@@ -286,7 +286,7 @@ function showPremiumFeatures() {
 document.getElementById("leaderboardBtn").addEventListener("click", async () => {
 
     try {
-        const response = await axios.get("http://localhost:3000/Expenses/premium/leaderboard", {
+        const response = await axios.get("/Expenses/premium/leaderboard", {
             
         });
 
@@ -318,7 +318,7 @@ try{
     const desc = document.getElementById("desc").value
     const input_text = `please give a single category for ${desc} falls under which category from these food ,fuel ,movie ,shopping `
     const response_text = await axios.post(
-        "http://localhost:3000/user/predictCategory",
+        "/user/predictCategory",
         {input_text}
     )
 
@@ -353,7 +353,7 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
         const token = localStorage.getItem("token");
 
         const response = await axios.get(
-            "http://localhost:3000/Expenses/downloadExpenses",
+            "/Expenses/downloadExpenses",
             {
                 headers: { Authorization: token },
                 
