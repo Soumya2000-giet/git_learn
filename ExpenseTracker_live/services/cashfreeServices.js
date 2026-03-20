@@ -30,7 +30,7 @@ const request = {
         "customer_phone": customerPhone
     },
     "order_meta": {
-        "return_url": `http://localhost:3000/index.html?order_id=${orderId}&token=${token}`,
+        "return_url": `http://3.88.171.3/index.html?order_id=${orderId}&token=${token}`,
         //"return_url": `http://localhost:3000/payment/payment-status/${orderId}`,
         //  "return_url": "https://www.cashfree.com/devstudio/preview/pg/web/checkout?order_id={order_id}",
          "payment_methods": "cc,dc,upi,nb,app"
