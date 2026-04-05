@@ -391,3 +391,16 @@ document.getElementById("itemsPerPage").addEventListener("change", () => {
   loadExpenses(Items_per_page); // reload expenses
 });
 
+document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+
+function logoutUser() {
+
+   
+    localStorage.removeItem("token");
+
+    
+    localStorage.removeItem("isPremium");
+
+  
+    window.location.href = "login.html";
+}
