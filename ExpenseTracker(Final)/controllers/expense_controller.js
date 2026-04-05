@@ -162,31 +162,72 @@ const getSortedExpense = async (req, res) => {
 
 
 
-const deleteExpense = async(req, res)=>{
-    const {id }= req.params
+const deleteExpense = async (req, res) => {
+    const { id } = req.params
     const user = req.user
     const t = await sequelize.transaction()
+
+    try {
+
         
-    try{
-        const result = await Expense.destroy({
-        where : {
-            id : id,
-            userId: user.id 
-        },
-        transaction : t
-    })
-    if(!result){
-        err_response(res, {StatusCode : 500,message : `unable to find expense with id ${id}`})
-    }
-    t.commit()
-     correctResponse(res,result)
-    }
-    catch(err){
+        const expense = await Expense.findOne({
+            where: {
+                id: id,
+                userId: user.id
+            },
+            transaction: t
+        })
+
+        if (!expense) {
+            await t.rollback()
+            return err_response(res, {
+                StatusCode: 404,
+                message: `Expense not found with id ${id}`
+            })
+        }
+
+        const amount = expense.amount   // ✅ we got amount here
+
+       
+        await Expense.destroy({
+            where: {
+                id: id,
+                userId: user.id
+            },
+            transaction: t
+        })
+
+        
+        const total_expense = Number(user.total_expense) - Number(amount)
+
+        await User.update(
+            { total_expense },
+            {
+                where: { id: user.id },
+                transaction: t
+            }
+        )
+
+        await t.commit()
+
+        correctResponse(res, {
+            message: "Expense deleted successfully",
+            deletedAmount: amount,
+            updatedTotalExpense: total_expense
+        })
+
+    } catch (err) {
         console.log(err)
-        t.rollback()
-         err_response(res, {StatusCode : 500,message : "unable to delete data from Expenses table"})
+        await t.rollback()
+
+        err_response(res, {
+            StatusCode: 500,
+            message: "Unable to delete data from Expenses table"
+        })
     }
 }
+
+
 
 const editExpense = async (req,res)=>{
     const {amount , desc, expense_type}  = req.body
