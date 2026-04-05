@@ -391,3 +391,15 @@ document.getElementById("itemsPerPage").addEventListener("change", () => {
   loadExpenses(Items_per_page); // reload expenses
 });
 
+function logoutUser() {
+
+   
+    localStorage.removeItem("token");
+
+    
+    localStorage.removeItem("isPremium");
+
+  
+    window.location.href = "login.html";
+}
+
