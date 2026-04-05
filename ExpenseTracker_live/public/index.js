@@ -390,6 +390,8 @@ document.getElementById("itemsPerPage").addEventListener("change", () => {
   setCurrentPage(1);          // reset to first page
   loadExpenses(Items_per_page); // reload expenses
 });
+document.getElementById("logoutBtn").addEventListener("click", logoutUser);
+
 
 function logoutUser() {
 
