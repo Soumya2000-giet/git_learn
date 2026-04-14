@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+    <form id="loginForm" class="form" onsubmit="handleFormSubmit(event)">
+        <h2>Login</h2>
+
+        <input type="email" id="email" placeholder="please enter your email" required>
+
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit">Login</button>
+        </form>
+        <!-- FORGOT PASSWORD BUTTON -->
+    <p style="margin-top: 10px;">
+      <button type="button" onclick="showForgotPasswordForm()" style="background:none;border:none;color:blue;cursor:pointer;">
+        Forgot Password?
+      </button>
+    </p>
+
+    <!-- FORGOT PASSWORD FORM (HIDDEN INITIALLY) -->
+    <form id="forgot-password-form" style="display:none;" onsubmit="handleForgotPassword(event)">
+      <div class="input-group">
+        <label for="forgot-email">Enter your email</label>
+        <input type="email" id="forgot-email" required />
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+
+        <p>Don't have account?
+            <a href="signup.html">Sign Up</a>
+        </p>
+    
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+<script src="login.js"></script>
+
+</body>
+</html>
