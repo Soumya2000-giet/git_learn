@@ -31,20 +31,38 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    window.sendMessage = function() {
+    window.sendMessage = async function() {
         const input = document.getElementById("messageInput");
         const text = input.value.trim();
 
         if (!text) return;
 
+       
+
+        try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.post("http://localhost:3000/user/message/send",
+            { message: text },
+            { headers: { Authorization: token } }
+        );
+
+        console.log(res)
+        // Show message instantly
         createMessage(text, "sent");
+
         input.value = "";
+
+    } catch (err) {
+        console.error(err);
+    }
 
         setTimeout(() => {
             createMessage("Reply: " + text, "received", "User2");
         }, 800);
     }
 
+    
     document.getElementById("messageInput").addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
             sendMessage();
