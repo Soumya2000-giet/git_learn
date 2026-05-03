@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async() => {
     const chatMessages = document.getElementById("chatMessages");
 
     function getCurrentTime() {
@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
     }
 
-    window.createMessage = function(text, type, username = "You") {
+    window.createMessage = async function(text, type, username = "You") {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message", type);
 
@@ -30,6 +30,32 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    try{
+
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get("http://localhost:3000/user/message/receive", {
+            headers: { Authorization: token }
+        });
+
+        const messages = res.data
+
+        console.log(messages)
+
+        messages.forEach(msg => {
+
+            createMessage(msg.message,"sent")
+            
+        });
+
+    }
+
+    catch(err){
+        console.log(`error is fetching message ${err}`)
+    }
+
+    
 
     window.sendMessage = async function() {
         const input = document.getElementById("messageInput");
@@ -57,9 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(err);
     }
 
-        setTimeout(() => {
-            createMessage("Reply: " + text, "received", "User2");
-        }, 800);
+        // setTimeout(() => {
+        //     createMessage("Reply: " + text, "received", "User2");
+        // }, 800);
     }
 
     

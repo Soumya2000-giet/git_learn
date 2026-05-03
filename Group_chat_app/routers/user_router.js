@@ -17,6 +17,9 @@ u_router.post('/login',u_controller.validateuser)
 
 u_router.post('/message/send',auth.user_auth,m_controller.sendmessage)
 
+u_router.get('/message/receive',auth.user_auth,m_controller.getmessage)
+
+
 
 
 u_router.post('/password/forgotpassword',u_controller.forgotPassword)

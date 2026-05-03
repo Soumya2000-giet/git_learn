@@ -34,7 +34,25 @@ const sendmessage = async (req, res) =>{
     }
 }
 
+    const getmessage = async(req, res) =>{
+    try{
+        const extracted_message = await message_mod.findAll({
+            attributes : ['message'],
+            where : {
+                userId : req.user.id
+            }
+        })
+        res.status(200).json(extracted_message);
+    }
+
+    catch(err){
+         console.error(err);
+        res.status(500).json({ success: false, message: "Failed to receive message" });
+    }
+}
+
 module. exports = {
 
-    sendmessage
+    sendmessage,
+    getmessage
 }
