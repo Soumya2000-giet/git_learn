@@ -14,8 +14,8 @@ async function handleFormSubmit(event) {
 
     if (result.data.status === true) {
       alert("User login successful");
-      localStorage.setItem("token", result.data.token);
-       window.location.href = "chatwindow.html";
+      sessionStorage.setItem("token", result.data.token);
+      window.location.href = "chatwindow.html";
     }
   } catch (err) {
     console.log(err);

@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", async() => {
     const chatMessages = document.getElementById("chatMessages");
 
+    const socket = new WebSocket("ws://localhost:3000");
+
+     function parseJwt(token) {
+        const base64Payload = token.split('.')[1];
+        return JSON.parse(atob(base64Payload));
+    }
+
     function getCurrentTime() {
         const now = new Date();
         return now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
@@ -16,6 +23,10 @@ document.addEventListener("DOMContentLoaded", async() => {
             user.innerText = username;
             messageDiv.appendChild(user);
         }
+
+
+
+
 
         const msgText = document.createElement("div");
         msgText.innerText = text;
@@ -33,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     try{
 
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         const res = await axios.get("http://localhost:3000/user/message/receive", {
             headers: { Authorization: token }
@@ -41,11 +52,20 @@ document.addEventListener("DOMContentLoaded", async() => {
 
         const messages = res.data
 
-        console.log(messages)
+        const currentUserId = parseJwt(token).id;
+
+       
 
         messages.forEach(msg => {
 
-            createMessage(msg.message,"sent")
+        
+        if (msg.userId === currentUserId) {
+                createMessage(msg.message, "sent");
+            } 
+            else {
+                // createMessage(msg.message, "received", "User " + msg.userId);
+                createMessage(msg.message, "received",  msg.user.username);
+            }
             
         });
 
@@ -66,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async() => {
        
 
         try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         const res = await axios.post("http://localhost:3000/user/message/send",
             { message: text },
@@ -75,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
         console.log(res)
         // Show message instantly
-        createMessage(text, "sent");
+        // createMessage(text, "sent");
 
         input.value = "";
 
@@ -87,6 +107,20 @@ document.addEventListener("DOMContentLoaded", async() => {
         //     createMessage("Reply: " + text, "received", "User2");
         // }, 800);
     }
+     socket.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+
+        console.log(`event data for socket ${JSON.stringify(msg)}`)
+
+        const token = sessionStorage.getItem("token");
+        const currentUserId = parseJwt(token).id;
+
+        if (msg.userId === currentUserId) {
+            createMessage(msg.message, "sent");
+        } else {
+            createMessage(msg.message, "received",  msg.user.username);
+        }
+    };
 
     
     document.getElementById("messageInput").addEventListener("keypress", function(e) {

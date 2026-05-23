@@ -15,6 +15,8 @@ const jwt = require('jsonwebtoken')
 
  const message_mod = require('../models/message_model')
 
+ const user_mod = require('../models/user_model')
+
 
 const sendmessage = async (req, res) =>{
 
@@ -25,8 +27,24 @@ const sendmessage = async (req, res) =>{
             message: message,
             userId: req.user.id   // from auth middleware
         });
+          const messageData = {
+            id: newMessage.id,
+            message: newMessage.message,
+            userId: newMessage.userId,
+            user: {
+                username: req.user.username
+            }
+        };
 
-        res.status(201).json({ success: true, data: newMessage });
+        const clients = req.app.get("clients");
+
+        clients.forEach(client => {
+            if (client.readyState === 1) {
+                client.send(JSON.stringify(messageData));
+            }
+        });
+
+        res.status(201).json({ success: true, data: messageData });
 
     } catch (err) {
         console.error(err);
@@ -37,10 +55,17 @@ const sendmessage = async (req, res) =>{
     const getmessage = async(req, res) =>{
     try{
         const extracted_message = await message_mod.findAll({
-            attributes : ['message'],
-            where : {
-                userId : req.user.id
-            }
+            attributes : ['message','userId'],
+
+            include: [
+                {
+                    model: user_mod,
+                    attributes: ['username'] 
+                }
+            ],
+
+            order: [['createdAt', 'ASC']]
+           
         })
         res.status(200).json(extracted_message);
     }
