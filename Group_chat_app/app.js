@@ -1,7 +1,11 @@
 const express = require('express');
 var Cors = require('cors');
 const http = require('http');          
-const WebSocket = require('ws');       
+// const WebSocket = require('ws');       
+
+
+const { Server } = require('socket.io');
+
 
 const app = express();
 app.use(Cors());
@@ -17,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 
 app.use('/user', user_route);
 
@@ -28,26 +32,42 @@ message_mod.belongsTo(user_mod);
 
 const server = http.createServer(app);
 
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
+// const wss = new WebSocket.Server({ server });
 
-const wss = new WebSocket.Server({ server });
+
 
 // store clients
 const clients = new Set();
 
-wss.on('connection', (ws) => {
-    console.log("WebSocket connected");
+// wss.on('connection', (ws) => {
+//     console.log("WebSocket connected");
 
-    clients.add(ws);
+//     clients.add(ws);
 
-    ws.on('close', () => {
-        console.log("WebSocket disconnected");
-        clients.delete(ws);
+//     ws.on('close', () => {
+//         console.log("WebSocket disconnected");
+//         clients.delete(ws);
+//     });
+// });
+
+io.on("connection", (socket) => {
+
+    console.log("User connected:", socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
     });
+
 });
 
 // make available in controllers
-app.set("clients", clients);
-
+// app.set("clients", clients);
+app.set("io", io);
 
 db.sync().then(() => {
     server.listen(3000, () => {

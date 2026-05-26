@@ -36,15 +36,24 @@ const sendmessage = async (req, res) =>{
             }
         };
 
-        const clients = req.app.get("clients");
+        // const clients = req.app.get("clients");
 
-        clients.forEach(client => {
-            if (client.readyState === 1) {
-                client.send(JSON.stringify(messageData));
-            }
+        // clients.forEach(client => {
+        //     if (client.readyState === 1) {
+        //         client.send(JSON.stringify(messageData));
+        //     }
+        // });
+
+        const io = req.app.get("io");
+
+        io.emit("receive_message", messageData);
+
+        res.status(201).json({
+            success: true,
+            data: messageData
         });
 
-        res.status(201).json({ success: true, data: messageData });
+        // res.status(201).json({ success: true, data: messageData });
 
     } catch (err) {
         console.error(err);

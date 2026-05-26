@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", async() => {
     const chatMessages = document.getElementById("chatMessages");
 
-    const socket = new WebSocket("ws://localhost:3000");
+    // const socket = new WebSocket("ws://localhost:3000");
+
+    const socket = io("http://localhost:3000");
 
      function parseJwt(token) {
         const base64Payload = token.split('.')[1];
@@ -107,21 +109,43 @@ document.addEventListener("DOMContentLoaded", async() => {
         //     createMessage("Reply: " + text, "received", "User2");
         // }, 800);
     }
-     socket.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
+    //  socket.onmessage = (event) => {
+    //     const msg = JSON.parse(event.data);
 
-        console.log(`event data for socket ${JSON.stringify(msg)}`)
+    //     console.log(`event data for socket ${JSON.stringify(msg)}`)
 
-        const token = sessionStorage.getItem("token");
-        const currentUserId = parseJwt(token).id;
+    //     const token = sessionStorage.getItem("token");
+    //     const currentUserId = parseJwt(token).id;
 
-        if (msg.userId === currentUserId) {
-            createMessage(msg.message, "sent");
-        } else {
-            createMessage(msg.message, "received",  msg.user.username);
-        }
-    };
+    //     if (msg.userId === currentUserId) {
+    //         createMessage(msg.message, "sent");
+    //     } else {
+    //         createMessage(msg.message, "received",  msg.user.username);
+    //     }
+    // };
 
+    socket.on("receive_message", (msg) => {
+
+    const token = sessionStorage.getItem("token");
+
+    const currentUserId = parseJwt(token).id;
+
+    if (msg.userId === currentUserId) {
+
+        createMessage(
+            msg.message,
+            "sent"
+        );
+
+    } else {
+
+        createMessage(
+            msg.message,
+            "received",
+            msg.user.username
+        );
+    }
+});
     
     document.getElementById("messageInput").addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
