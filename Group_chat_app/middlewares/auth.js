@@ -10,8 +10,6 @@ const user_auth = async(req, res , next)=>{
 
     const user = jwt.verify(token,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
 
-    console.log(user.id)
-
     const User = await user_mod.findByPk(user.id)
 
     if (!user){

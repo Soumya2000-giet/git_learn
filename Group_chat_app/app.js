@@ -1,7 +1,11 @@
 const express = require('express');
 var Cors = require('cors');
 const http = require('http');          
-// const WebSocket = require('ws');       
+// const WebSocket = require('ws');  
+
+require('dotenv').config();
+
+const jwt = require("jsonwebtoken");
 
 
 const { Server } = require('socket.io');
@@ -37,30 +41,57 @@ const io = new Server(server, {
         origin: "*"
     }
 });
-// const wss = new WebSocket.Server({ server });
+
+
+
 
 
 
 // store clients
 const clients = new Set();
 
-// wss.on('connection', (ws) => {
-//     console.log("WebSocket connected");
+io.use((socket, next) => {
 
-//     clients.add(ws);
+    const token = socket.handshake.auth.token;
 
-//     ws.on('close', () => {
-//         console.log("WebSocket disconnected");
-//         clients.delete(ws);
-//     });
-// });
+    console.log("Socket token:", token);
+    console.log("JWT Secret:", process.env.JWT_SECRET);
+
+    try {
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
+
+        console.log("Decoded:", decoded);
+
+        socket.user = decoded;
+
+        next();
+
+    } catch (err) {
+
+        console.log("Socket Verify Error:", err);
+        console.log("Socket Verify Error Message:", err.message);
+
+        next(new Error("Invalid Token"));
+    }
+});
 
 io.on("connection", (socket) => {
 
     console.log("User connected:", socket.id);
+      console.log(
+        `User ${socket.user.username} connected`
+    );
 
     socket.on("disconnect", () => {
+
         console.log("User disconnected:", socket.id);
+          console.log(
+        `User ${socket.user.username} disconnected`
+    );
     });
 
 });

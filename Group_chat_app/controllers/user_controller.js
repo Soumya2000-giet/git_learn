@@ -248,8 +248,18 @@ const adduser = async (req, res)=>{
 }
 
 
-function generateAcessToken(id){
-  return jwt.sign({id},'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+function generateAcessToken(id, username){
+  // return jwt.sign({id},'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')
+
+  return jwt.sign(
+    {
+        id,username
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "1d"
+    }
+);
 }
 
 const validateuser = async (req, res)=>{
@@ -277,7 +287,10 @@ bcrypt.compare(password, user_exist.password , (err,result)=>{
      return  res.status(200).json({
     data: user_exist,
     status: true,
-    token : generateAcessToken(user_exist.id)
+    token : generateAcessToken(
+  user_exist.id,
+  user_exist.username
+)
   })
   }
   else{

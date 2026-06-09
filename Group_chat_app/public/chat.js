@@ -3,7 +3,26 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     // const socket = new WebSocket("ws://localhost:3000");
 
-    const socket = io("http://localhost:3000");
+    // const socket = io("http://localhost:3000");
+
+    const token = sessionStorage.getItem("token");
+
+
+    console.log(`line no 11 is token ${token}`)
+
+    const socket = io("http://localhost:3000", {
+        auth: {
+            token: token
+        }
+    });
+
+    socket.on("connect", () => {
+    console.log("Connected:", socket.id);
+});
+
+socket.on("connect_error", (err) => {
+    console.log("Socket Error:", err.message);
+});
 
      function parseJwt(token) {
         const base64Payload = token.split('.')[1];
